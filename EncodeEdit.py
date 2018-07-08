@@ -7,7 +7,7 @@ Modified from https://github.com/TeamErlich/dna-fountain
 
 #utils.pyx
 intab = "012345"
-outtab - "ACGTPZ"
+outtab = "ACGTPZ"
 
 def screen_repeat_dna(dna, max_repeat, gc_dev):
 
