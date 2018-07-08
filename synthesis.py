@@ -87,7 +87,7 @@ def main():
         if HEADER in oligo: #Reading the header for the oligo
             continue
 
-        mutated = [random.randrange(0, int(MUTATION_CHANCE ** -1)) for i in range(arg.oligo_size)] #generating list of integers between 0 - (1/MUTATION_CHANCE).
+        mutated = [random.randrange(0, int(MUTATION_CHANCE ** -1)) for i in range(arg.oligo_size)] #generating list of random integers between 0 - (1/MUTATION_CHANCE).
 
         synth_dna = []
 
