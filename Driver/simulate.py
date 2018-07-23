@@ -7,6 +7,10 @@ from PCR import amplify
 from sanger import sequence, calc_stop
 import sys
 
+#Possible features to include
+#Print the actual percentage of oligos "sequenced", as it might be slightly different than what the user requested
+#Add ability to manually induce dropouts? 
+
 HEADER = 'packet'
 
 def read_args():
