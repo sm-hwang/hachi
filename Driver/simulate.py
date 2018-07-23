@@ -10,6 +10,7 @@ import sys
 #Possible features to include
 #Print the actual percentage of oligos "sequenced", as it might be slightly different than what the user requested
 #Add ability to manually induce dropouts? 
+#https://waymoot.org/home/python_string/ for string concatenation efficiency 
 
 HEADER = 'packet'
 
