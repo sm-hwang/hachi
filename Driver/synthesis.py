@@ -27,13 +27,13 @@ def synthesize(oligo_list):
         
         mutated = np.random.randint(int(MUTATION_CHANCE ** -1), size= len(oligo))    #generating list of integers between 0 - (1/MUTATION_CHANCE).
                                                                                      #length of list is equal to length of oligo in nt.
-        synth_dna = []
+        synth_dna = [None] * len(oligo)
         
         for i, chance in enumerate(mutated):            
             if chance == 0:                             #If mutated[i] == 0, then it is mutated 
-                synth_dna.append(mutate(oligo[i]))
+                synth_dna[i] = mutate(oligo[i])
             else:
-                synth_dna.append(oligo[i])
+                synth_dna[i] = oligo[i]
 
         pool.append("".join(synth_dna))
 
