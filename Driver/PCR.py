@@ -15,13 +15,13 @@ def amplify(pool, num_cycle):
         for oligo in np_pool:
             mistake = np.random.randint(LOSS_GAIN_PER, size= len(oligo))
             
-            pcr_oligo = ""
+            pcr_oligo = [None] * len(oligo)
             for nt in range(len(oligo)):
                 if mistake[nt] == 0:
-                    pcr_oligo += loss_or_gain(oligo[nt])                 
+                    pcr_oligo[nt] = loss_or_gain(oligo[nt])                  
                 else:
-                    pcr_oligo += oligo[nt]
-            clone.append(pcr_oligo)
+                    pcr_oligo[nt] = oligo[nt]
+            clone.append(''.join(pcr_oligo))
         np_pool = np.append(np_pool, clone)
 
         pbar.update()
