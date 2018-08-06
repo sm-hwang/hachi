@@ -1,16 +1,9 @@
 import argparse
-import logging
 from tqdm import tqdm
-import numpy
 from synthesis import synthesize
 from PCR import amplify 
 from sanger import sequence, calc_stop
 import sys
-
-#Possible features to include
-#Print the actual percentage of oligos "sequenced", as it might be slightly different than what the user requested
-#Add ability to manually induce dropouts? 
-#https://waymoot.org/home/python_string/ for string concatenation efficiency 
 
 HEADER = 'packet'
 
@@ -18,7 +11,7 @@ def read_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file_in", help="File with oligos to synthesize", required=True)
     parser.add_argument("--pcr_cycles", help="Number of PCR cycles", default = 10, type = int)
-    parser.add_argument("--dropout", help="Original oligo dropout percentage", type = float)
+    #parser.add_argument("--dropout", help="Original oligo dropout percentage", type = float)
     parser.add_argument("--num_seq", help="Number of oligos to sequence in the PCR pool", type = int)
     parser.add_argument("--percent_seq", help="% of oligos to sequence in the PCR pool", type = float)
     parser.add_argument("--output", help="File with sequenced oligos", required=True)
@@ -49,10 +42,8 @@ def get_oligo_list(file_name):
     return oligo_list
 
 def write_data(output, chosen_oligos):
-    if (output == '-'):
-        out = sys.stdout
-    else:
-        out = open(output, 'w')
+   
+    out = open(output, 'w')
 
     for oligo in chosen_oligos:
         out.write(oligo + "\n")
@@ -61,8 +52,7 @@ def write_data(output, chosen_oligos):
 def main():
 
     args = read_args()
-
-    oligo_list = get_oligo_list(args.file_in) #dropout
+    oligo_list = get_oligo_list(args.file_in) 
 
     pool = synthesize(oligo_list)
 
@@ -70,17 +60,8 @@ def main():
 
     stop = calc_stop(args.num_seq, args.percent_seq, np_pool.size) 
     chosen_oligos = sequence(np_pool, stop)
+    
     write_data(args.output, chosen_oligos)
-"""
-    if (args.output == '-'):
-        out = sys.stdout
-    else:
-        out = open(args.output, 'w')
-
-    for oligo in chosen_oligos:
-        out.write(oligo + "\n")
-    out.close()
-"""
     
 main()
 
