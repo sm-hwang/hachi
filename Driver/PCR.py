@@ -1,34 +1,47 @@
 import numpy as np
 from tqdm import tqdm 
 
-LOSS_GAIN_PER = 500 #Loss and gain of P:Z is 0.2% per theoretical PCR cycle
+MISTAKE = 5000
 
-#Deleting pool after being converted to np.array?
 def amplify(pool, num_cycle):
 
     pbar = tqdm(total= num_cycle, desc= "PCR rounds completed")
 
-    np_pool = np.array(pool)
+    pool = np.array(pool)
     
     for cycle in range(num_cycle):
         clone = []
-        for oligo in np_pool:
-            mistake = np.random.randint(LOSS_GAIN_PER, size= len(oligo))
+        for oligo in pool:
+            mistake = np.random.randint(MISTAKE, size= len(oligo))
             
             pcr_oligo = [None] * len(oligo)
             for nt in range(len(oligo)):
-                if mistake[nt] == 0:
+                if mistake[nt] < 0:
                     pcr_oligo[nt] = loss_or_gain(oligo[nt])                  
+                elif mistake[nt] == 10:
+                    pcr_oligo[nt] = transition(oligo[nt])
                 else:
                     pcr_oligo[nt] = oligo[nt]
             clone.append(''.join(pcr_oligo))
-        np_pool = np.append(np_pool, clone)
+        pool = np.append(pool, clone)
 
         pbar.update()
     pbar.close()
     
-    return np_pool
+    return pool
 
+def transition(base):
+    if base == 'A':
+        return 'G'
+    elif base == 'C':
+        return 'T'
+    elif base == 'G':
+        return 'A'
+    elif base == 'T':
+        return 'C'
+    else:
+        return base
+    
 def loss_or_gain(base):
     synthetic = ['P', 'Z']
     if base in synthetic:
