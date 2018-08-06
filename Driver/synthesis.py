@@ -6,7 +6,7 @@ DELETION = 0
 INSERTION = 1
 
 def mutate(base):
-    chance = np.random.randint(0,3)
+    chance = np.random.randint(0,3) #Each type of mistakes are equiprobable
     nt_list = ['A','C','G','T','P','Z']
     if chance == DELETION:
         nt = ""
@@ -29,16 +29,16 @@ def synthesize(oligo_list):
                                                                                      #length of list is equal to length of oligo in nt.
         synth_dna = [None] * len(oligo)
         
-        for i, chance in enumerate(mutated):            
+        for nt, chance in enumerate(mutated):            
             if chance == 0:                             #If mutated[i] == 0, then it is mutated 
-                synth_dna[i] = mutate(oligo[i])
+                synth_dna[nt] = mutate(oligo[nt])
             else:
-                synth_dna[i] = oligo[i]
-
+                synth_dna[nt] = oligo[nt]
         pool.append("".join(synth_dna))
 
         pbar.update()
     pbar.close()
+    
     return pool
         
 
