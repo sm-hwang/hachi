@@ -1,6 +1,6 @@
 import argparse
-from synthesis import synthesize
-from PCR import amplify 
+from synthesis import synthesize, set_mutation_rate
+from PCR import amplify, set_error_rate 
 from sanger import sequence, calc_stop
 import sys
 
