@@ -1,10 +1,20 @@
 import numpy as np
 from tqdm import tqdm 
 
-MISTAKE = 5000
+def set_error_rate(worst_case, no_synth):
+    global mistake_per, synth_error
+    if worst_case:
+        mistake_per = 5000
+    else:
+        mistake_per = 100000
+    if no_synth:
+        synth_error = 0
+    else:
+        synth_error = 0.002
 
 def amplify(pool, num_cycle):
 
+    within_prob = int(synth_error * mistake_per)
     pbar = tqdm(total= num_cycle, desc= "PCR rounds completed")
 
     pool = np.array(pool)
@@ -12,13 +22,13 @@ def amplify(pool, num_cycle):
     for cycle in range(num_cycle):
         clone = []
         for oligo in pool:
-            mistake = np.random.randint(MISTAKE, size= len(oligo))
+            mistake = np.random.randint(mistake_per, size= len(oligo))
             
             pcr_oligo = [None] * len(oligo)
             for nt in range(len(oligo)):
-                if mistake[nt] < 0:
+                if mistake[nt] < within_prob:
                     pcr_oligo[nt] = loss_or_gain(oligo[nt])                  
-                elif mistake[nt] == 10:
+                elif mistake[nt] == within_prob:
                     pcr_oligo[nt] = transition(oligo[nt])
                 else:
                     pcr_oligo[nt] = oligo[nt]
