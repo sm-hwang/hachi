@@ -11,8 +11,8 @@ def sequence(np_pool, stop):
     
     sequence_data = [None] * stop
     picked = choose_oligos(np_pool.size, stop)
-    for seq in picked:
-        sequence_data[seq] = np_pool[seq]
+    for i,seq in enumerate(picked):
+        sequence_data[i] = np_pool[seq]
         pbar.update()
     pbar.close()
     
