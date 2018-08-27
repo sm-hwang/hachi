@@ -1,8 +1,8 @@
 import numpy as np
 from tqdm import tqdm 
 
-def set_error_rate(worst_case, no_synth):
-    global mistake_per, synth_error
+def set_error_rate(worst_case, no_synth, errorN):
+    global mistake_per, synth_error, gen_error
     if worst_case:
         mistake_per = 5000
     else:
@@ -11,6 +11,9 @@ def set_error_rate(worst_case, no_synth):
         synth_error = 0
     else:
         synth_error = 0.002
+    gen_error = False
+    if errorN:
+        gen_error = True
 
 def amplify(pool, num_cycle):
 
@@ -41,6 +44,8 @@ def amplify(pool, num_cycle):
     return pool
 
 def transition(base):
+    if gen_error:
+        return 'N'
     if base == 'A':
         return 'G'
     elif base == 'C':
@@ -53,6 +58,8 @@ def transition(base):
         return base
     
 def loss_or_gain(base):
+    if gen_error:
+        return 'N'
     synthetic = ['P', 'Z']
     if base in synthetic:
         return loss(base)
