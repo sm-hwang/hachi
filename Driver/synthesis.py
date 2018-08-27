@@ -4,8 +4,8 @@ from tqdm import tqdm
 DELETION = 0
 INSERTION = 1
 
-def set_mutation_rate(worst_case, no_synth):
-    global mutation_per, nt_list
+def set_mutation_rate(worst_case, no_synth, errorN):
+    global mutation_per, nt_list, gen_error
     if worst_case:
         mutation_per = 500
     else:
@@ -14,8 +14,13 @@ def set_mutation_rate(worst_case, no_synth):
         nt_list = ['A','C','G','T']
     else:
         nt_list = ['A','C','G','T','P','Z']
+    gen_error = False
+    if errorN:
+        gen_error = True
 
 def mutate(base):
+    if gen_error:
+        return 'N'
     chance = np.random.randint(0,3) #Each type of mistakes are equiprobable
     if chance == DELETION:
         nt = ""
