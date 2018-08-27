@@ -1,7 +1,7 @@
 import argparse
 from synthesis import synthesize, set_mutation_rate
 from PCR import amplify, set_error_rate 
-from sanger import sequence, calc_stop
+from negbin import sequence, prepare_list 
 import sys
 
 HEADER = 'packet'
@@ -12,14 +12,16 @@ def read_args():
     parser.add_argument("--pcr_cycles", help="Number of PCR cycles", default = 10, type = int)
     parser.add_argument("--worst_case", help="Use the highest error rates", default = False, action="store_true")
     parser.add_argument("--no_synth", help= "Use ACGT nucleotides only", default = False, action="store_true")
-    parser.add_argument("--num_seq", help="Number of oligos to sequence in the PCR pool", type = int)
-    parser.add_argument("--percent_seq", help="% of oligos to sequence in the PCR pool", type = float)
+    parser.add_argument("--avg_cov", help="Average oligo coverage when sequencing", default = 10, type= int) 
+    parser.add_argument("--size_para", help="Size parameter for sequencing coverage", default = 2, type= int) 
+    parser.add_argument("--errorN", help= "Every error replaces the nucleotide with N", default = False, action="store_true")
+    parser.add_argument("--copies", help= "Number of copies of oligos to synthesize", default = 1, type = int)
     parser.add_argument("--output", help="File with sequenced oligos", required=True)
     args = parser.parse_args()
 
     return(args)
 
-def get_oligo_list(file_name):
+def read_oligo_list(file_name):
     
     try:
         f = open(file_name, 'r')
@@ -28,6 +30,7 @@ def get_oligo_list(file_name):
         sys.exit(0)
 
     oligo_list = []
+    count = 0
 
     for oligo in f:
 
@@ -35,10 +38,11 @@ def get_oligo_list(file_name):
             continue
 
         oligo_list.append(oligo.rstrip("\n"))
+        count += 1
 
     f.close()
 
-    return oligo_list
+    return oligo_list, count
 
 def write_data(output, chosen_oligos):
    
@@ -48,22 +52,23 @@ def write_data(output, chosen_oligos):
         out.write(oligo + "\n")
     out.close()
 
-def set_rates(worst_case, no_synth):
-    set_mutation_rate(worst_case, no_synth)
-    set_error_rate(worst_case, no_synth)
+def set_rates(worst_case, no_synth, errorN):
+    set_mutation_rate(worst_case, no_synth, errorN)
+    set_error_rate(worst_case, no_synth, errorN)
 
 def main():
 
     args = read_args()
-    set_rates(args.worst_case, args.no_synth)
-    oligo_list = get_oligo_list(args.file_in) 
+    set_rates(args.worst_case, args.no_synth, args.errorN)
+    oligo_list, count = read_oligo_list(args.file_in) 
 
+    oligo_list = prepare_list(oligo_list, args.avg_cov, args.size_para, count, args.copies)
+    
     pool = synthesize(oligo_list)
-
+    
     np_pool = amplify(pool, args.pcr_cycles)
 
-    stop = calc_stop(args.num_seq, args.percent_seq, np_pool.size) 
-    chosen_oligos = sequence(np_pool, stop)
+    chosen_oligos = sequence(np_pool, count, args.avg_cov)
     
     write_data(args.output, chosen_oligos)
     
