@@ -75,15 +75,41 @@ def prepare(max_repeat):
     Ys = '7' * (max_repeat+1)
 
 def screen_repeat_dna(dna, max_repeat, gc_dev):
+    dev = gc_dev / 2
 
     if As in dna or Cs in dna or Gs in dna or Ts in dna or Ps in dna or Zs in dna or Xs in dna or Ys in dna: 
         return 0
-    #Possibly add a filter so every nucleotide composes approximately 1/8th of the oligo 
-    #gc = dna.count("1") + dna.count("2")  
-    #gc = gc/(len(dna)+0.0)
+    
+    gc = dna.count("1") + dna.count("2")  
+    gc = gc/(len(dna)+0.0)
 
-    #if (gc < 0.5 - gc_dev) or (gc > 0.5 + gc_dev):
-        #return 0
+    at = dna.count("0") + dna.count("3")  
+    at = at/(len(dna)+0.0)
+
+    pz = dna.count("4") + dna.count("5")  
+    pz = pz/(len(dna)+0.0)
+
+    if (gc < 0.5 - dev) or (gc > 0.5 + dev) or (at < 0.5 - dev) or (at > 0.5 + dev) or (pz < 0.5 - dev) or (pz > 0.5 + dev):
+        return 0
+    return 1
+
+def screen_dna_string(dna, gc_dev):
+    dev = gc_dev / 2
+
+    if As in dna or Cs in dna or Gs in dna or Ts in dna or Ps in dna or Zs in dna or Xs in dna or Ys in dna: 
+        return 0
+    
+    gc = dna.count("1") + dna.count("2")  
+    gc = gc/(len(dna)+0.0)
+
+    at = dna.count("0") + dna.count("3")  
+    at = at/(len(dna)+0.0)
+
+    pz = dna.count("4") + dna.count("5")  
+    pz = pz/(len(dna)+0.0)
+
+    if (gc < 0.5 - dev) or (gc > 0.5 + dev) or (at < 0.5 - dev) or (at > 0.5 + dev) or (pz < 0.5 - dev) or (pz > 0.5 + dev):
+        return 0
     return 1
 
 def dna_to_int_array(dna_str):
