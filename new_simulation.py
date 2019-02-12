@@ -172,7 +172,7 @@ def sequence(pool, ow_mistakes, avg_cov, len_oligo, num_pool):
         pbar.update()
     pbar.close()
 
-    print "Percent: " + str(float(stop) / totOligoInPool + ow_mistakes))
+    print "Percent: " + str(float(stop) / totOligoInPool + ow_mistakes)
 
     return sequence_data, seq_mistakes
 
